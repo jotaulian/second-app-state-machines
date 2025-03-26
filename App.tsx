@@ -1,20 +1,33 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+// App.tsx
+import React from 'react'
+import { useMachine } from '@xstate/react'
+import { navigationMachine } from '@/navigationMachine'
+import { SplashScreen } from '@/components/SpashScreen'
+import { HomeScreen } from '@/components/HomeScreen'
+import { SecondaryScreen } from '@/components/SecondaryScreen'
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+  const [state, send] = useMachine(navigationMachine)
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  if (state.matches('splash')) {
+    return <SplashScreen onTimeout={() => send({ type: 'TIMEOUT' })} />
+  }
+
+  if (state.matches('home')) {
+    return (
+      <HomeScreen
+        onNavigateToSecondary={() => send({ type: 'NAVIGATE_SECONDARY' })}
+      />
+    )
+  }
+
+  if (state.matches('secondary')) {
+    return (
+      <SecondaryScreen
+        onNavigateToHome={() => send({ type: 'NAVIGATE_HOME' })}
+      />
+    )
+  }
+
+  return null // Handle unexpected states
+}
