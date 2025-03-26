@@ -29,5 +29,5 @@ export default function App() {
     )
   }
 
-  return null // Handle unexpected states
+  return null
 }

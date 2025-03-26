@@ -7,10 +7,10 @@ const SplashScreenStyles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#365829',
   },
-  text: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#c7fa6c',
+  spinner: {
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
   },
 })
 
