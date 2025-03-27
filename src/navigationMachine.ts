@@ -1,20 +1,55 @@
-import { createMachine } from 'xstate'
+// navigationMachine.ts
+import { setup, createMachine, fromPromise, assign } from 'xstate'
+import { Character } from '@/types'
+import fetchCharactersPromise from './services/fetchCharacters'
 
-export const navigationMachine = createMachine({
+export const navigationMachine = setup({
+  types: {
+    context: {} as {
+      characters: Character[]
+      selectedCharacter: Character | null
+    },
+  },
+  actors: {
+    fetchCharacters: fromPromise(fetchCharactersPromise),
+  },
+}).createMachine({
   id: 'navigation',
-  initial: 'splash',
+  initial: 'loading',
+  context: {
+    characters: [],
+    selectedCharacter: null,
+  },
   states: {
-    splash: {
-      on: {
-        TIMEOUT: 'home',
+    loading: {
+      invoke: {
+        id: 'getCharacters',
+        src: 'fetchCharacters',
+        onDone: {
+          target: 'home',
+          actions: assign({
+            characters: ({ event }) => event.output,
+          }),
+        },
+        onError: {
+          target: 'home', // or an error state.
+          actions: () => console.error('Failed to fetch characters'),
+        },
       },
     },
     home: {
       on: {
-        NAVIGATE_SECONDARY: 'secondary',
+        SELECT_CHARACTER: {
+          target: 'characterDetail',
+          actions: assign({
+            selectedCharacter: ({ context, event }) =>
+              context.characters.find((c) => c.id === event.characterId) ||
+              null,
+          }),
+        },
       },
     },
-    secondary: {
+    characterDetail: {
       on: {
         NAVIGATE_HOME: 'home',
       },

@@ -4,7 +4,6 @@ const HomeScreenStyles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#E7E0DB',
   },
   text: {

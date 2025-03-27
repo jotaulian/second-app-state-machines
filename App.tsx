@@ -4,28 +4,37 @@ import { useMachine } from '@xstate/react'
 import { navigationMachine } from '@/navigationMachine'
 import { SplashScreen } from '@/components/SpashScreen'
 import { HomeScreen } from '@/components/HomeScreen'
-import { SecondaryScreen } from '@/components/SecondaryScreen'
+import { CharacterDetailScreen } from '@/components/CharacterDetailScreen'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 export default function App() {
   const [state, send] = useMachine(navigationMachine)
 
   const screenMap: Record<string, JSX.Element> = {
-    splash: <SplashScreen onTimeout={() => send({ type: 'TIMEOUT' })} />,
+    loading: <SplashScreen />,
     home: (
       <HomeScreen
-        onNavigateToSecondary={() => send({ type: 'NAVIGATE_SECONDARY' })}
+        characters={state.context.characters}
+        onSelectCharacter={(id) =>
+          send({ type: 'SELECT_CHARACTER', characterId: id })
+        }
       />
     ),
-    secondary: (
-      <SecondaryScreen
-        onNavigateToHome={() => send({ type: 'NAVIGATE_HOME' })}
+    characterDetail: (
+      <CharacterDetailScreen
+        character={state.context.selectedCharacter}
+        onNavigateHome={() => send({ type: 'NAVIGATE_HOME' })}
       />
     ),
   }
 
   const currentScreenKey = Object.keys(screenMap).find((key) =>
-    state.matches(key)
+    state.matches(key as 'loading' | 'home' | 'characterDetail')
   )
 
-  return screenMap[currentScreenKey ?? ''] || null
+  return (
+    <SafeAreaProvider>
+      {screenMap[currentScreenKey ?? ''] || null}
+    </SafeAreaProvider>
+  )
 }
