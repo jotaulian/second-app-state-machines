@@ -9,25 +9,23 @@ import { SecondaryScreen } from '@/components/SecondaryScreen'
 export default function App() {
   const [state, send] = useMachine(navigationMachine)
 
-  if (state.matches('splash')) {
-    return <SplashScreen onTimeout={() => send({ type: 'TIMEOUT' })} />
-  }
-
-  if (state.matches('home')) {
-    return (
+  const screenMap: Record<string, JSX.Element> = {
+    splash: <SplashScreen onTimeout={() => send({ type: 'TIMEOUT' })} />,
+    home: (
       <HomeScreen
         onNavigateToSecondary={() => send({ type: 'NAVIGATE_SECONDARY' })}
       />
-    )
-  }
-
-  if (state.matches('secondary')) {
-    return (
+    ),
+    secondary: (
       <SecondaryScreen
         onNavigateToHome={() => send({ type: 'NAVIGATE_HOME' })}
       />
-    )
+    ),
   }
 
-  return null
+  const currentScreenKey = Object.keys(screenMap).find((key) =>
+    state.matches(key)
+  )
+
+  return screenMap[currentScreenKey ?? ''] || null
 }
