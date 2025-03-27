@@ -1,20 +1,31 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+// App.tsx
+import React from 'react'
+import { useMachine } from '@xstate/react'
+import { navigationMachine } from '@/navigationMachine'
+import { SplashScreen } from '@/components/SpashScreen'
+import { HomeScreen } from '@/components/HomeScreen'
+import { SecondaryScreen } from '@/components/SecondaryScreen'
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+  const [state, send] = useMachine(navigationMachine)
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  const screenMap: Record<string, JSX.Element> = {
+    splash: <SplashScreen onTimeout={() => send({ type: 'TIMEOUT' })} />,
+    home: (
+      <HomeScreen
+        onNavigateToSecondary={() => send({ type: 'NAVIGATE_SECONDARY' })}
+      />
+    ),
+    secondary: (
+      <SecondaryScreen
+        onNavigateToHome={() => send({ type: 'NAVIGATE_HOME' })}
+      />
+    ),
+  }
+
+  const currentScreenKey = Object.keys(screenMap).find((key) =>
+    state.matches(key)
+  )
+
+  return screenMap[currentScreenKey ?? ''] || null
+}
