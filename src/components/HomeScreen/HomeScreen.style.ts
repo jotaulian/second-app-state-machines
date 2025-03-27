@@ -6,11 +6,6 @@ const HomeScreenStyles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#E7E0DB',
   },
-  text: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#3D373C',
-  },
 })
 
 export default HomeScreenStyles
