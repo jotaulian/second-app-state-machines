@@ -1,17 +1,30 @@
+import { FlatList } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import styles from './HomeScreen.style'
-import { View, Text, Button } from 'react-native'
+import { Character } from '@/types'
+import { CharacterCard } from '@/components/CharacterCard'
 
 interface HomeScreenProps {
-  onNavigateToSecondary: () => void
+  characters: Character[]
+  onSelectCharacter: (id: number) => void
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
-  onNavigateToSecondary,
+  characters,
+  onSelectCharacter,
 }) => {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Home Screen</Text>
-      <Button title="Go to Secondary" onPress={onNavigateToSecondary} />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <FlatList
+        data={characters}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <CharacterCard
+            character={item}
+            onSelectCharacter={onSelectCharacter}
+          ></CharacterCard>
+        )}
+      />
+    </SafeAreaView>
   )
 }

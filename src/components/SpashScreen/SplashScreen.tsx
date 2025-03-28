@@ -1,20 +1,13 @@
-import { useEffect, useRef } from 'react'
-import { View, Image, Animated } from 'react-native'
+// SplashScreen.tsx
+import React, { useEffect, useRef } from 'react'
+import { View, Animated } from 'react-native'
 import styles from './SplashScreen.style'
 import portal from '../../../assets/portal-splash-rickandmorty.png'
 
-interface SplashScreenProps {
-  onTimeout: () => void
-}
-
-export const SplashScreen: React.FC<SplashScreenProps> = ({ onTimeout }) => {
+export const SplashScreen: React.FC = () => {
   const rotation = useRef(new Animated.Value(0)).current
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      onTimeout()
-    }, 2000)
-
     Animated.loop(
       Animated.timing(rotation, {
         toValue: 1,
@@ -24,10 +17,9 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onTimeout }) => {
     ).start()
 
     return () => {
-      clearTimeout(timer)
       rotation.stopAnimation()
     }
-  }, [onTimeout, rotation])
+  }, [rotation])
 
   const spin = rotation.interpolate({
     inputRange: [0, 1],
