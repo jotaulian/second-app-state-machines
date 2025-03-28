@@ -1,4 +1,4 @@
-import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native'
+import { FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import styles from './HomeScreen.style'
 import { Character } from '@/types'
