@@ -16,8 +16,12 @@ export default function App() {
     home: (
       <HomeScreen
         characters={state.context.characters}
+        favouriteCharacters={state.context.favouriteCharacters}
         onSelectCharacter={(id) =>
           send({ type: 'SELECT_CHARACTER', characterId: id })
+        }
+        onFavouriteCharacter={(character) =>
+          send({ type: 'TOGGLE_FAVOURITE_CHARACTER', character: character })
         }
       />
     ),

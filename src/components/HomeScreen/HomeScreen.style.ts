@@ -18,6 +18,11 @@ const HomeScreenStyles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
   },
+  sectionTitle: {
+    fontSize: 25,
+    fontWeight: 700,
+    padding: 10,
+  },
 })
 
 export default HomeScreenStyles

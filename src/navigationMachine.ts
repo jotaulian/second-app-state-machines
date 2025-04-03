@@ -2,13 +2,18 @@
 import { setup, createMachine, fromPromise, assign } from 'xstate'
 import { Character } from '@/types'
 import fetchCharactersPromise from './services/fetchCharacters'
-import { getCharacters } from './services/asyncStorage'
+import {
+  addFavCharactersToStorage,
+  getCharacters,
+  getFavCharacters,
+} from './services/asyncStorage'
 
 export const navigationMachine = setup({
   types: {
     context: {} as {
       characters: Character[]
       selectedCharacter: Character | null
+      favouriteCharacters: Character[]
     },
   },
   actors: {
@@ -19,6 +24,15 @@ export const navigationMachine = setup({
       console.log(`Loaded ${chars.length} characters from AsyncStorage.`)
 
       return chars ?? []
+    }),
+    getFavCharactersFromStorageActor: fromPromise(async () => {
+      console.log('Attempting to load characters from AsyncStorage...')
+      const favCharacters = await getFavCharacters() // Llama a tu función de AsyncStorage
+      console.log(
+        `Loaded ${favCharacters.length} characters from AsyncStorage.`
+      )
+
+      return favCharacters ?? []
     }),
   },
   guards: {
@@ -32,6 +46,7 @@ export const navigationMachine = setup({
   context: {
     characters: [],
     selectedCharacter: null,
+    favouriteCharacters: [],
   },
   states: {
     loading: {
@@ -68,6 +83,19 @@ export const navigationMachine = setup({
       },
     },
     home: {
+      invoke: {
+        id: 'getFavCharactersFromStorageActor',
+        src: 'getFavCharactersFromStorageActor',
+        onDone: {
+          actions: assign({
+            favouriteCharacters: ({ event }) => event.output,
+          }),
+        },
+        onError: {
+          actions: () =>
+            console.error('Failed to fetch characters from Storage'),
+        },
+      },
       on: {
         SELECT_CHARACTER: {
           target: 'characterDetail',
@@ -75,6 +103,24 @@ export const navigationMachine = setup({
           actions: assign({
             selectedCharacter: ({ context, event }) =>
               context.characters.find((c) => c.id === event.characterId)!,
+          }),
+        },
+        TOGGLE_FAVOURITE_CHARACTER: {
+          actions: assign({
+            favouriteCharacters: ({ context, event }) => {
+              const isAlreadyFavourite = context.favouriteCharacters.some(
+                (favChar) => favChar.id === event.character.id
+              )
+
+              if (isAlreadyFavourite) {
+                return context.favouriteCharacters.filter(
+                  (char) => char.id !== event.character.id
+                )
+              } else {
+                addFavCharactersToStorage(event.character)
+                return [event.character, ...context.favouriteCharacters]
+              }
+            },
           }),
         },
       },
