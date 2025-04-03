@@ -5,8 +5,6 @@ import { Character } from '@/types'
 import { CharacterCard } from '@/components/CharacterCard'
 import { useState } from 'react'
 
-import * as SQLite from 'expo-sqlite'
-
 interface HomeScreenProps {
   characters: Character[]
   onSelectCharacter: (id: number) => void
@@ -20,17 +18,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <TextInput
-        style={styles.input}
-        onChangeText={onChangeText}
-        value={text}
-      />
-      <Pressable style={styles.saveButton}>
-        <Text>Save</Text>
-      </Pressable>
-      <View>
-        <Text>{text}</Text>
-      </View>
       <FlatList
         data={characters}
         keyExtractor={(item) => item.id.toString()}
