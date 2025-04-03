@@ -22,6 +22,24 @@ const CharacterCardStyles = StyleSheet.create({
     height: 125,
     borderRadius: 15,
   },
+
+  // Estilos para el botón interno (Pressable)
+  button: {
+    borderRadius: 5,
+    alignSelf: 'flex-start', // Para que no ocupe todo el ancho
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 5,
+  },
+  buttonPressed: {
+    backgroundColor: '#E7E0DB', // Color más oscuro al presionar
+  },
+  buttonText: {
+    color: 'black',
+    fontWeight: '600',
+    textAlign: 'center',
+  },
 })
 
 export default CharacterCardStyles

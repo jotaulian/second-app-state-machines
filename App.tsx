@@ -12,11 +12,16 @@ export default function App() {
 
   const screenMap: Record<string, JSX.Element> = {
     loading: <SplashScreen />,
+    loadingStorage: <SplashScreen />,
     home: (
       <HomeScreen
         characters={state.context.characters}
+        favouriteCharacters={state.context.favouriteCharacters}
         onSelectCharacter={(id) =>
           send({ type: 'SELECT_CHARACTER', characterId: id })
+        }
+        onFavouriteCharacter={(character) =>
+          send({ type: 'TOGGLE_FAVOURITE_CHARACTER', character: character })
         }
       />
     ),
@@ -29,7 +34,9 @@ export default function App() {
   }
 
   const currentScreenKey = Object.keys(screenMap).find((key) =>
-    state.matches(key as 'loading' | 'home' | 'characterDetail')
+    state.matches(
+      key as 'loading' | 'loadingStorage' | 'home' | 'characterDetail'
+    )
   )
 
   return (
